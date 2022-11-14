@@ -24,15 +24,18 @@ public class Node {
     }
 
     public void reveal() {
-
-    }
-
-    public void setBomb() {
-
+        if(isbomb){
+            
+        }
     }
 
     public int bombCheck() {
-        return 4;
+        if (isbomb){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 
 }
