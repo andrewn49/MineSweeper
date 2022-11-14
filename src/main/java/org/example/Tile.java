@@ -2,26 +2,34 @@ package org.example;
 
 public class Tile {
     private boolean isbomb;
-    private int isrevealed;
+    private int tilestate; // 0 = unrevealed, 1 = no bomb, 2 = adjacent bomb, 3 = bomb
     private int neighbors;
 
     public Tile(boolean bomb) {
         isbomb = bomb;
-        isrevealed = 0;
+        tilestate = 0;
     }
 
     public boolean revealMe() {
-        if (isbomb == true) {
-            isrevealed = 2;
+        if (isbomb) {
+            tilestate = 3;
             return true;
         }
         else{
-            isrevealed = 1;
+            tilestate = 1;
             return false;
         }
     }
 
-    public int revealState(){
-        return isrevealed;
+    public int getTilestate(){
+        return tilestate;
+    }
+
+    public void addNeighbor(){
+        neighbors++;
+    }
+
+    public int getNeighbors(){
+        return neighbors;
     }
 }
