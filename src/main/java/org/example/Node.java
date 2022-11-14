@@ -25,7 +25,7 @@ public class Node {
 
     public void reveal() {
         if(isbomb){
-            
+
         }
     }
 
