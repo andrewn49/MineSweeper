@@ -7,23 +7,33 @@ public class Grid {
     double rand;
     boolean playing;
     Scanner rowsel;
+    int revealedtiles;
+    int totaltiles;
+    int bombs;
 
    //Constructor for a new Grid of Tiles. Automatically fills with a random number of bombs, each tile has a 20% chance
-    public Grid(int size, int totalbombs){
+    public Grid(int size){
         spots = new Tile[size][size];
         rowsel = new Scanner(System.in);
         playing = true;
+        revealedtiles = 0;
+        totaltiles = size * size;
+        bombs = 0;
+        //go through and create tiles in each spot in the grid with a 20% chance of that tile being a bomb
         for(int row = 0; row < spots.length; row++) {
             for (int col = 0; col < spots[row].length; col++) {
                 rand = Math.random() * 10;
                 if(rand >= 8){
                     spots[row][col] = new Tile(true);
+                    bombs++;
                 }
                 else{
                     spots[row][col] = new Tile(false);
                 }
             }
         }
+        //go through grid again and increment the neighbor value for all tiles adjacent to bombs
+        System.out.println(bombs + " bombs placed");
         for(int row = 0; row < spots.length; row++) {
             for (int col = 0; col < spots[row].length; col++) {
                 if(spots[row][col].getIsbomb()){
@@ -31,7 +41,6 @@ public class Grid {
                 }
             }
         }
-        System.out.println("\n" + totalbombs + " bombs placed"); //Show number of bombs on the grid
     }
 
     public void play(){
@@ -41,8 +50,9 @@ public class Grid {
             int col = rowsel.nextInt();
             System.out.println("Enter row: ");
             int row = rowsel.nextInt();
-            if (this.spots[row][col].revealMe()) {
-                gameOver();
+            revealGroup(row, col);
+            if (revealedtiles == totaltiles - bombs){
+                winGame();
             }
             showGrid();
         }
@@ -52,6 +62,13 @@ public class Grid {
     public void gameOver(){
         System.out.println("");
         System.out.println("BOOM! Sorry, you blew up, try again!");
+        playing = false;
+    }
+
+    public void winGame(){
+        System.out.println("");
+        System.out.println("You win! Congratulations!");
+        System.out.println(bombs + " bombs | " + revealedtiles + " revealed tiles | " + totaltiles + " total tiles");
         playing = false;
     }
 
@@ -146,5 +163,165 @@ public class Grid {
 
             }
         }
+    }
+
+    public void revealGroup(int row, int col){
+        if(spots[row][col].revealMe()){
+            gameOver();
+        }
+        else if(!spots[row][col].revealMe() && spots[row][col].getTilestate() == 1){
+            //if we're at the top left, we don't need to increment anything to the left or above
+            if (row == 0 && col == 0) {
+                if(spots[row+1][col].getTilestate() == 0){
+                    revealGroup(row+1, col);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row, col+1);
+                }
+                if(spots[row+1][col+1].getTilestate() == 0){
+                    revealGroup(row+1, col+1);
+                }
+            }
+            //top, but not far left or far right
+            else if(row == 0 && col != 0 && col != spots[row].length-1) {
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row,col+1);
+                }
+                if(spots[row+1][col-1].getTilestate() == 0){
+                    revealGroup(row+1,col-1);
+                }
+                if(spots[row+1][col].getTilestate() == 0){
+                    revealGroup(row+1, col);
+                }
+                if(spots[row+1][col+1].getTilestate() == 0){
+                    revealGroup(row+1,col+1);
+                }
+            }
+            //top right
+            else if(row == 0 && col == spots[row].length-1) {
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+                if(spots[row+1][col-1].getTilestate() == 0){
+                    revealGroup(row+1, col-1);
+                }
+                if(spots[row+1][col+1].getTilestate() ==0){
+                    revealGroup(row+1, col+1);
+                }
+
+            }
+            //far left, but not top or bottom
+            else if(col == 0 && row != 0 && row != spots.length-1){
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row-1][col+1].getTilestate() == 0){
+                    revealGroup(row-1, col+1);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row, col+1);
+                }
+                if(spots[row+1][col].getTilestate() == 0){
+                    revealGroup(row+1, col);
+                }
+                if(spots[row+1][col+1].getTilestate() == 0){
+                    revealGroup(row+1, col+1);
+                }
+            }
+            //bottom left
+            else if(col == 0 && row == spots.length-1){
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row-1][col+1].getTilestate() == 0){
+                    revealGroup(row-1, col+1);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row, col+1);
+                }
+            }
+            //far right but not top or bottom
+            else if(col == spots[row].length-1 && row != 0 && row != spots.length-1){
+                if(spots[row-1][col-1].getTilestate() == 0){
+                    revealGroup(row-1, col-1);
+                }
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+                if(spots[row+1][col-1].getTilestate() == 0){
+                    revealGroup(row+1, col-1);
+                }
+                if(spots[row+1][col].getTilestate() == 0){
+                    revealGroup(row+1, col);
+                }
+            }
+            //bottom right
+            else if(col == spots[row].length-1 && row == spots.length-1){
+                if(spots[row-1][col-1].getTilestate() == 0){
+                    revealGroup(row-1, col-1);
+                }
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+            }
+            //bottom, but not far left or far right
+            else if(row == spots.length-1 && col != 0 && col != spots[row].length){
+                if(spots[row-1][col-1].getTilestate() == 0){
+                    revealGroup(row-1, col-1);
+                }
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row-1][col+1].getTilestate() == 0){
+                    revealGroup(row-1, col+1);
+                }
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row, col+1);
+                }
+            }
+            //all middle tiles
+            else{
+                if(spots[row-1][col-1].getTilestate() == 0){
+                    revealGroup(row-1, col-1);
+                }
+                if(spots[row-1][col].getTilestate() == 0){
+                    revealGroup(row-1, col);
+                }
+                if(spots[row-1][col+1].getTilestate() == 0){
+                    revealGroup(row-1, col+1);
+                }
+                if(spots[row][col-1].getTilestate() == 0){
+                    revealGroup(row, col-1);
+                }
+                if(spots[row][col+1].getTilestate() == 0){
+                    revealGroup(row, col+1);
+                }
+                if(spots[row+1][col-1].getTilestate() == 0){
+                    revealGroup(row+1, col-1);
+                }
+                if(spots[row+1][col].getTilestate() == 0){
+                    revealGroup(row+1, col);
+                }
+                if(spots[row+1][col+1].getTilestate() == 0){
+                    revealGroup(row+1, col+1);
+                }
+            }
+        }
+        else if(!spots[row][col].revealMe() && spots[row][col].getTilestate() == 2){
+            System.out.println("WAAA");
+        }
+
     }
 }

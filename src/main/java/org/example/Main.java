@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grid playarea = new Grid(6, 15);
+        Grid playarea = new Grid(15);
         boolean cont = true;
         playarea.showGrid();
 
