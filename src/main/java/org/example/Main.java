@@ -4,18 +4,19 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
-        boolean playing = true;
         Grid playarea = new Grid(6, 15);
+        boolean cont = true;
         playarea.showGrid();
 
-        try {
-            while (playing) {
-               playarea.play();
-               playarea.showGrid();
+        while(cont){
+            cont = playarea.playing;
+            try {
+                playarea.play();
+
+            } catch (Exception e) {
+                System.out.println("invalid input, try again");
+                playarea.rowsel.nextLine();
             }
-        } catch (Exception e) {
-            System.out.println("invalid input, try again");
         }
     }
 }

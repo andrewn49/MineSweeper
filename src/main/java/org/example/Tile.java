@@ -10,10 +10,17 @@ public class Tile {
         tilestate = 0;
     }
 
+    public boolean getIsbomb(){
+        return isbomb;
+    }
+
     public boolean revealMe() {
         if (isbomb) {
             tilestate = 3;
             return true;
+        }else if (neighbors > 0){
+            tilestate = 2;
+            return false;
         }
         else{
             tilestate = 1;
