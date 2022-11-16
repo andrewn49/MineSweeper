@@ -2,7 +2,7 @@ package org.example;
 
 public class Tile {
     private boolean isbomb;
-    private int tilestate; // 0 = unrevealed, 1 = no bomb, 2 = adjacent bomb, 3 = bomb
+    private int tilestate; // 0 = unrevealed, 1 = no bomb, 2 = adjacent bomb, 3 = bomb, 4 = flagged
     private int neighbors;
 
     public Tile(boolean bomb) {
@@ -14,16 +14,24 @@ public class Tile {
         return isbomb;
     }
 
+    public void flagMe(){
+        tilestate = 4;
+    }
     public boolean revealMe() {
-        if (isbomb) {
-            tilestate = 3;
-            return true;
-        }else if (neighbors > 0){
-            tilestate = 2;
-            return false;
+        if(tilestate != 4){
+            if (isbomb) {
+                tilestate = 3;
+                return true;
+            }else if (neighbors > 0){
+                tilestate = 2;
+                return false;
+            }
+            else{
+                tilestate = 1;
+                return false;
+            }
         }
         else{
-            tilestate = 1;
             return false;
         }
     }
