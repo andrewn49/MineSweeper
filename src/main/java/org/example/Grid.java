@@ -12,12 +12,12 @@ public class Grid {
     int bombs;
 
    //Constructor for a new Grid of Tiles. Automatically fills with a random number of bombs, each tile has a 20% chance
-    public Grid(int size){
-        spots = new Tile[size][size];
+    public Grid(int sizex, int sizey){
+        spots = new Tile[sizey][sizex];
         rowsel = new Scanner(System.in);
         playing = true;
         revealedtiles = 0;
-        totaltiles = size * size;
+        totaltiles = sizex * sizey;
         bombs = 0;
         //go through and create tiles in each spot in the grid with a 20% chance of that tile being a bomb
         for(int row = 0; row < spots.length; row++) {
@@ -170,7 +170,7 @@ public class Grid {
                     System.out.print("   ■ ");
                 }
                 else if(spots[row][col].getTilestate() == 4){
-                    System.out.print("   ⚑ ");
+                    System.out.print("  [F]");
                 }
 
             }
