@@ -179,6 +179,7 @@ public class Grid {
 
     public void revealGroup(char flag, int row, int col){
         if(flag == 'c'){
+            revealedtiles++;
             if(spots[row][col].revealMe()){
                 gameOver();
             }
