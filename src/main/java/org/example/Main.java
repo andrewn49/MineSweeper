@@ -11,22 +11,44 @@ public class Main {
         //Start setup process, continue until we have valid input
         while(setup){
             try{
-                System.out.println("Enter the number of columns you would like.");
+                System.out.println("Enter the number of columns you would like, up to 45");
                 x = input.nextInt();
-                System.out.println("Enter the number of rows you would like.");
+                System.out.println("Enter the number of rows you would like, up to 45");
                 y = input.nextInt();
-                setup = false;
+                if(x > 45 || y > 45){
+                    System.out.println("Too large! Try again!");
+                    setup = true;
+                }
+                else if (x == 0 || y == 0){
+                    System.out.println("Too small! Try again!");
+                    setup = true;
+                }
+                else{
+                    setup = false;
+                }
+
             }
             catch (Exception e) {
-                System.out.println("invalid input, try again");
+                System.out.println("Invalid input. Try again");
                 input.nextLine();
             }
 
         }
 
+
         //construct new grid of height y, width x
         Grid playarea = new Grid(x, y);
         boolean cont = true;
+        System.out.print("  ");
+        for(int i = 0; i <= x - 1; i++){
+            if(i< 11){
+                System.out.print("    " + i);
+            }
+            else{
+                System.out.print("   " + i);
+            }
+
+        }
         playarea.showGrid();
 
         while(cont){

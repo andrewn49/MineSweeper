@@ -33,7 +33,6 @@ public class Grid {
             }
         }
         //go through grid again and increment the neighbor value for all tiles adjacent to bombs
-        System.out.println(bombs + " bombs placed");
         for(int row = 0; row < spots.length; row++) {
             for (int col = 0; col < spots[row].length; col++) {
                 if(spots[row][col].getIsbomb()){
@@ -55,6 +54,15 @@ public class Grid {
             revealGroup(flag, row, col);
             if (revealedtiles == totaltiles - bombs){
                 winGame();
+            }
+            System.out.print("  ");
+            for(int i = 0; i <= spots.length - 1; i++){
+                if(i< 11){
+                    System.out.print("    " + i);
+                }
+                else{
+                    System.out.print("   " + i);
+                }
             }
             showGrid();
         }
@@ -157,20 +165,25 @@ public class Grid {
         for(int row = 0; row < spots.length; row++) {
             System.out.print("\n");
             for (int col = 0; col < spots[row].length; col++) {
+                if(col == 0 && row < 10){
+                    System.out.print(row+ "  ");
+                }else if(col == 0){
+                    System.out.print(row+ " ");
+                }
                 if(spots[row][col].getTilestate() == 1){ //spot is revealed and not a bomb
-                    System.out.print("  [ ]");
+                    System.out.print("     ");
                 }
                 else if(spots[row][col].getTilestate() == 2){ //spot is revealed and is adjacent to a bomb
                     System.out.print("  [" + spots[row][col].getNeighbors() +"]");
                 }
                 else if(spots[row][col].getTilestate() == 3){ //spot is revealed and IS a bomb
-                    System.out.print("  [X]");
+                    System.out.print("   X ");
                 }
                 else if(spots[row][col].getTilestate() == 0){ //spot is not revealed
                     System.out.print("   ■ ");
                 }
                 else if(spots[row][col].getTilestate() == 4){
-                    System.out.print("  [F]");
+                    System.out.print("   □ ");
                 }
 
             }
@@ -336,6 +349,9 @@ public class Grid {
         }
         else if (flag == 'f'){
             spots[row][col].flagMe();
+        }
+        else{
+            System.out.println("Invalid input. Try again");
         }
 
     }

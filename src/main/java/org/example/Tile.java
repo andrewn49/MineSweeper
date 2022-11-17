@@ -15,7 +15,12 @@ public class Tile {
     }
 
     public void flagMe(){
-        tilestate = 4;
+        if(tilestate != 4){
+            tilestate = 4;
+        }
+        else{
+            tilestate = 0;
+        }
     }
     public boolean revealMe() {
         if(tilestate != 4){
