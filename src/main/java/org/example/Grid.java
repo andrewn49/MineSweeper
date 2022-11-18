@@ -200,7 +200,7 @@ public class Grid {
             if(spots[row][col].revealMe()){ //Hit a bomb
                 gameOver();
             }
-            else if(!spots[row][col].revealMe() && spots[row][col].getTilestate() == 1){
+            else if(!spots[row][col].revealMe() && spots[row][col].getTilestate() == 1){ //Didn't hit a bomb and there are no adjacent bombs to current tile
                 //If we're at the top left, we don't need to reveal anything to the left or above
                 if (row == 0 && col == 0) {
                     if(spots[row+1][col].getTilestate() == 0){
