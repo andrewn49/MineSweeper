@@ -15,50 +15,36 @@ public class Main {
                 x = input.nextInt();
                 System.out.println("Enter the number of rows you would like, up to 45");
                 y = input.nextInt();
-                if(x > 45 || y > 45){
+                if(x > 45 || y > 45){ //limit the size, otherwise game is difficult to play as console only shows a limited number of characters
                     System.out.println("Too large! Try again!");
                     setup = true;
                 }
-                else if (x == 0 || y == 0){
+                else if (x == 0 || y == 0){ //prevent heights or widths of 0
                     System.out.println("Too small! Try again!");
                     setup = true;
                 }
                 else{
                     setup = false;
                 }
-
             }
-            catch (Exception e) {
+            catch (Exception e) { //catch invalid input exceptions and retry until we're given valid
                 System.out.println("Invalid input. Try again");
                 input.nextLine();
             }
-
         }
-
 
         //construct new grid of height y, width x
         Grid playarea = new Grid(x, y);
         boolean cont = true;
-        System.out.print("  ");
-        for(int i = 0; i <= x - 1; i++){
-            if(i< 11){
-                System.out.print("    " + i);
-            }
-            else{
-                System.out.print("   " + i);
-            }
-
-        }
         playarea.showGrid();
-
         while(cont){
-            cont = playarea.playing;
+            cont = playarea.getPlaystate();
             try {
                 playarea.play();
 
-            } catch (Exception e) {
-                System.out.println("invalid input, try again");
-                playarea.rowsel.nextLine();
+            } catch (Exception e) { //catch invalid input exceptions and retry until we're given valid
+                System.out.println("Invalid input. Try again");
+                playarea.getInput().nextLine();
             }
         }
     }

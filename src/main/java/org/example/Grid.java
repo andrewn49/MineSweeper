@@ -3,23 +3,23 @@ package org.example;
 import java.util.Scanner;
 
 public class Grid {
-    Tile[][] spots;
-    double rand;
-    boolean playing;
-    Scanner rowsel;
-    int revealedtiles;
-    int totaltiles;
-    int bombs;
+    private Tile[][] spots;
+    private double rand;
+    private boolean playing;
+    private Scanner input;
+    private int revealedtiles;
+    private int totaltiles;
+    private int bombs;
 
    //Constructor for a new Grid of Tiles. Automatically fills with a random number of bombs, each tile has a 20% chance
     public Grid(int sizex, int sizey){
         spots = new Tile[sizey][sizex];
-        rowsel = new Scanner(System.in);
+        input = new Scanner(System.in);
         playing = true;
         revealedtiles = 0;
         totaltiles = sizex * sizey;
         bombs = 0;
-        //go through and create tiles in each spot in the grid with a 20% chance of that tile being a bomb
+        //Go through and create tiles in each spot in the grid with a 20% chance of that tile being a bomb
         for(int row = 0; row < spots.length; row++) {
             for (int col = 0; col < spots[row].length; col++) {
                 rand = Math.random() * 10;
@@ -32,7 +32,7 @@ public class Grid {
                 }
             }
         }
-        //go through grid again and increment the neighbor value for all tiles adjacent to bombs
+        //Go through grid again and increment the neighbor value for all tiles adjacent to bombs
         for(int row = 0; row < spots.length; row++) {
             for (int col = 0; col < spots[row].length; col++) {
                 if(spots[row][col].getIsbomb()){
@@ -45,24 +45,15 @@ public class Grid {
     public void play(){
         while(playing){
             System.out.println("");
-            System.out.println("Flag (f) or clear (c)?");
-            char flag = rowsel.next().charAt(0);
-            System.out.println("Enter column:");
-            int col = rowsel.nextInt();
-            System.out.println("Enter row: ");
-            int row = rowsel.nextInt();
-            revealGroup(flag, row, col);
+            System.out.println("Flag (f) or clear (c)?"); //Prompt for action
+            char flag = input.next().charAt(0);
+            System.out.println("Enter column:"); //Prompt for column
+            int col = input.nextInt();
+            System.out.println("Enter row: "); //Prompt for row
+            int row = input.nextInt();
+            revealGroup(flag, row, col); //Reveal tiles
             if (revealedtiles == totaltiles - bombs){
                 winGame();
-            }
-            System.out.print("  ");
-            for(int i = 0; i <= spots.length - 1; i++){
-                if(i< 11){
-                    System.out.print("    " + i);
-                }
-                else{
-                    System.out.print("   " + i);
-                }
             }
             showGrid();
         }
@@ -73,6 +64,7 @@ public class Grid {
         System.out.println("");
         System.out.println("BOOM! Sorry, you blew up, try again!");
         playing = false;
+        //show all bomb locations after failure
         for(int row = 0; row < spots.length; row++){
             for(int col = 0; col < spots[row].length; col++){
                 if(spots[row][col].getIsbomb()){
@@ -82,6 +74,7 @@ public class Grid {
         }
     }
 
+    //Called when all safe tiles are revealed
     public void winGame(){
         System.out.println("");
         System.out.println("You win! Congratulations!");
@@ -89,7 +82,7 @@ public class Grid {
         playing = false;
     }
 
-    //increment Neighboring bomb count for surrounding tiles
+    //Increment Neighboring bomb count for surrounding tiles
     public void incNeighbors(int row, int col) {
         //if we're at the top left, we don't need to increment anything to the left or above
         if (row == 0 && col == 0) {
@@ -162,27 +155,38 @@ public class Grid {
 
     //Display the grid to the screen
     public void showGrid(){
+        System.out.print("  "); //Displaying column numbers and aligning them
+        for(int i = 0; i <= spots[0].length - 1; i++){
+            if(i< 11){
+                System.out.print("    " + i);
+            }
+            else{
+                System.out.print("   " + i);
+            }
+        }
         for(int row = 0; row < spots.length; row++) {
             System.out.print("\n");
             for (int col = 0; col < spots[row].length; col++) {
+                //Displaying row numbers and aligning them
                 if(col == 0 && row < 10){
                     System.out.print(row+ "  ");
                 }else if(col == 0){
                     System.out.print(row+ " ");
                 }
-                if(spots[row][col].getTilestate() == 1){ //spot is revealed and not a bomb
+                //Displaying tiles
+                if(spots[row][col].getTilestate() == 1){ //Spot is revealed and not a bomb
                     System.out.print("     ");
                 }
-                else if(spots[row][col].getTilestate() == 2){ //spot is revealed and is adjacent to a bomb
+                else if(spots[row][col].getTilestate() == 2){ //Spot is revealed and is adjacent to a bomb
                     System.out.print("  [" + spots[row][col].getNeighbors() +"]");
                 }
-                else if(spots[row][col].getTilestate() == 3){ //spot is revealed and IS a bomb
+                else if(spots[row][col].getTilestate() == 3){ //Spot is revealed and IS a bomb
                     System.out.print("   X ");
                 }
-                else if(spots[row][col].getTilestate() == 0){ //spot is not revealed
+                else if(spots[row][col].getTilestate() == 0){ //Spot is not revealed
                     System.out.print("   ■ ");
                 }
-                else if(spots[row][col].getTilestate() == 4){
+                else if(spots[row][col].getTilestate() == 4){ //Spot is flagged
                     System.out.print("   □ ");
                 }
 
@@ -191,13 +195,13 @@ public class Grid {
     }
 
     public void revealGroup(char flag, int row, int col){
-        if(flag == 'c'){
+        if(flag == 'c'){ //If action is 'clear' move on to clearing tiles
             revealedtiles++;
-            if(spots[row][col].revealMe()){
+            if(spots[row][col].revealMe()){ //Hit a bomb
                 gameOver();
             }
             else if(!spots[row][col].revealMe() && spots[row][col].getTilestate() == 1){
-                //if we're at the top left, we don't need to increment anything to the left or above
+                //If we're at the top left, we don't need to reveal anything to the left or above
                 if (row == 0 && col == 0) {
                     if(spots[row+1][col].getTilestate() == 0){
                         revealGroup('c',row+1, col);
@@ -209,7 +213,7 @@ public class Grid {
                         revealGroup('c', row+1, col+1);
                     }
                 }
-                //top, but not far left or far right
+                //Top, but not far left or far right
                 else if(row == 0 && col != 0 && col != spots[row].length-1) {
                     if(spots[row][col-1].getTilestate() == 0){
                         revealGroup('c', row, col-1);
@@ -227,7 +231,7 @@ public class Grid {
                         revealGroup('c', row+1,col+1);
                     }
                 }
-                //top right
+                //Top right
                 else if(row == 0 && col == spots[row].length-1) {
                     if(spots[row][col-1].getTilestate() == 0){
                         revealGroup('c', row, col-1);
@@ -240,7 +244,7 @@ public class Grid {
                     }
 
                 }
-                //far left, but not top or bottom
+                //Far left, but not top or bottom
                 else if(col == 0 && row != 0 && row != spots.length-1){
                     if(spots[row-1][col].getTilestate() == 0){
                         revealGroup('c', row-1, col);
@@ -258,7 +262,7 @@ public class Grid {
                         revealGroup('c', row+1, col+1);
                     }
                 }
-                //bottom left
+                //Bottom left
                 else if(col == 0 && row == spots.length-1){
                     if(spots[row-1][col].getTilestate() == 0){
                         revealGroup('c', row-1, col);
@@ -270,7 +274,7 @@ public class Grid {
                         revealGroup('c', row, col+1);
                     }
                 }
-                //far right but not top or bottom
+                //Far right but not top or bottom
                 else if(col == spots[row].length-1 && row != 0 && row != spots.length-1){
                     if(spots[row-1][col-1].getTilestate() == 0){
                         revealGroup('c', row-1, col-1);
@@ -288,7 +292,7 @@ public class Grid {
                         revealGroup('c', row+1, col);
                     }
                 }
-                //bottom right
+                //Bottom right
                 else if(col == spots[row].length-1 && row == spots.length-1){
                     if(spots[row-1][col-1].getTilestate() == 0){
                         revealGroup('c', row-1, col-1);
@@ -300,7 +304,7 @@ public class Grid {
                         revealGroup('c', row, col-1);
                     }
                 }
-                //bottom, but not far left or far right
+                //Bottom, but not far left or far right
                 else if(row == spots.length-1 && col != 0 && col != spots[row].length){
                     if(spots[row-1][col-1].getTilestate() == 0){
                         revealGroup('c', row-1, col-1);
@@ -318,7 +322,7 @@ public class Grid {
                         revealGroup('c', row, col+1);
                     }
                 }
-                //all middle tiles
+                //All middle tiles
                 else{
                     if(spots[row-1][col-1].getTilestate() == 0){
                         revealGroup('c', row-1, col-1);
@@ -347,12 +351,20 @@ public class Grid {
                 }
             }
         }
-        else if (flag == 'f'){
+        else if (flag == 'f'){//If action is 'flag' move on to flagging tile
             spots[row][col].flagMe();
         }
-        else{
+        else{ //If action is neither 'clear' nor 'flag'
             System.out.println("Invalid input. Try again");
         }
 
+    }
+
+    public boolean getPlaystate(){
+        return playing;
+    }
+
+    public Scanner getInput(){
+        return input;
     }
 }
